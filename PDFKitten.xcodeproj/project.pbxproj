@@ -42,6 +42,8 @@
 		2CE7BCE713897245009784B9 /* Scanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CE7BCE613897245009784B9 /* Scanner.m */; };
 		2CE7BCEB1389725D009784B9 /* RenderingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CE7BCEA1389725D009784B9 /* RenderingState.m */; };
 		2CE7BCEF13897294009784B9 /* Selection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CE7BCEE13897294009784B9 /* Selection.m */; };
+		9E8AB62014903CAB00CA0ED7 /* PDFCoreTextParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AB61F14903CAB00CA0ED7 /* PDFCoreTextParser.m */; };
+		9E8AB6241490402500CA0ED7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E8AB6231490402500CA0ED7 /* CoreText.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +110,9 @@
 		2CE7BCEA1389725D009784B9 /* RenderingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RenderingState.m; path = PDFKitten/RenderingState.m; sourceTree = SOURCE_ROOT; };
 		2CE7BCED13897293009784B9 /* Selection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Selection.h; path = PDFKitten/Selection.h; sourceTree = SOURCE_ROOT; };
 		2CE7BCEE13897294009784B9 /* Selection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Selection.m; path = PDFKitten/Selection.m; sourceTree = SOURCE_ROOT; };
+		9E8AB61E14903CAB00CA0ED7 /* PDFCoreTextParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFCoreTextParser.h; path = PDFKitten/PDFCoreTextParser.h; sourceTree = SOURCE_ROOT; };
+		9E8AB61F14903CAB00CA0ED7 /* PDFCoreTextParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDFCoreTextParser.m; path = PDFKitten/PDFCoreTextParser.m; sourceTree = SOURCE_ROOT; };
+		9E8AB6231490402500CA0ED7 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +125,7 @@
 				2C0E15B013589B0B004096C7 /* CoreGraphics.framework in Frameworks */,
 				2C855590137B336C00D58482 /* QuartzCore.framework in Frameworks */,
 				2C38D8E713EF370700718B0D /* Security.framework in Frameworks */,
+				9E8AB6241490402500CA0ED7 /* CoreText.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +154,7 @@
 		2C0E15AA13589B0B004096C7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9E8AB6231490402500CA0ED7 /* CoreText.framework */,
 				2C38D8E613EF370700718B0D /* Security.framework */,
 				2C85558F137B336C00D58482 /* QuartzCore.framework */,
 				2C0E15AB13589B0B004096C7 /* UIKit.framework */,
@@ -304,6 +311,8 @@
 			children = (
 				2CE7BCE513897245009784B9 /* Scanner.h */,
 				2CE7BCE613897245009784B9 /* Scanner.m */,
+				9E8AB61E14903CAB00CA0ED7 /* PDFCoreTextParser.h */,
+				9E8AB61F14903CAB00CA0ED7 /* PDFCoreTextParser.m */,
 			);
 			name = Scanner;
 			sourceTree = "<group>";
@@ -417,6 +426,7 @@
 				2CA0FCA513EEB1C00028DCCD /* PageViewController.m in Sources */,
 				2C47505F13F3E48200BC2DB9 /* DocumentsView.m in Sources */,
 				2CC77EC114560E2E000E9B8E /* PDFPageDetailsView.m in Sources */,
+				9E8AB62014903CAB00CA0ED7 /* PDFCoreTextParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,10 +489,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PDFKitten/PDFKitten-Prefix.pch";
@@ -498,10 +504,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PDFKitten/PDFKitten-Prefix.pch";
 				INFOPLIST_FILE = "PDFKitten/PDFKitten-Info.plist";

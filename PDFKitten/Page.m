@@ -26,6 +26,10 @@
         doubleTap.numberOfTapsRequired = 2;
         [self addGestureRecognizer:doubleTap];
         [doubleTap release];
+        
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPress:)];
+        [self addGestureRecognizer:longPress];
+        [longPress release];
     }
     return self;
 }
@@ -41,6 +45,12 @@
     CGFloat hScale = CGRectGetWidth(self.bounds) / CGRectGetWidth(contentView.bounds);
     CGFloat vScale = CGRectGetHeight(self.bounds) / CGRectGetHeight(contentView.bounds);
     [self setZoomScale:MIN(hScale, vScale) animated:YES];
+}
+
+- (void)didLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    //hit test
+    
 }
 
 - (UIView *)contentView

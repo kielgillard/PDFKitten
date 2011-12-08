@@ -156,4 +156,9 @@
     return ((PDFContentView *)contentView).keyword;
 }
 
+- (void)didLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    
+}
+
 @end
