@@ -47,6 +47,12 @@
 //	[initialState release]; initialState = nil;
 }
 
+- (BOOL)hitTest:(CGPoint)viewPoint
+{
+    CGPoint p = CGPointApplyAffineTransform(viewPoint, transform);
+    return CGRectContainsPoint(frame, p);
+}
+
 
 #pragma mark - Memory Management
 

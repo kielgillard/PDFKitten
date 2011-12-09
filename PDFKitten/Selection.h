@@ -14,6 +14,8 @@
 /* Finalize the selection (ending marker) */
 - (void)finalizeWithState:(RenderingState *)state;
 
+- (BOOL)hitTest:(CGPoint)viewPoint;
+
 /* The frame with zero origin covering the selection */
 @property (nonatomic, readonly) CGRect frame;
 

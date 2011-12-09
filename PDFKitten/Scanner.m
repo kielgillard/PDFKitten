@@ -43,6 +43,8 @@ void cm(CGPDFScannerRef scanner, void *info);
 @property (nonatomic, readonly) Font *currentFont;
 @property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
 @property (nonatomic, copy) NSURL *documentURL;
+@property (nonatomic, assign) BOOL findsPoint;
+@property (nonatomic, assign) CGPoint documentPoint;
 
 /* Returts the operator callbacks table for scanning page stream */
 @property (nonatomic, readonly) CGPDFOperatorTableRef operatorTable;
@@ -182,6 +184,11 @@ void cm(CGPDFScannerRef scanner, void *info);
 	CGPDFContentStreamRelease(content); content = nil;
 }
 
+- (void)setHitTestPoint:(CGPoint)hitTestPoint
+{
+    self.findsPoint = YES;
+    self.documentPoint = hitTestPoint;
+}
 
 #pragma mark StringDetectorDelegate
 
@@ -212,6 +219,15 @@ void cm(CGPDFScannerRef scanner, void *info);
 
 	if (self.currentSelection)
 	{
+        if (self.findsPoint)
+        {
+            
+            if (self.positiveHitTestBlock && [self.currentSelection hitTest:self.documentPoint]) {
+                NSLog(@"String is \"%@\"", needle);
+                self.positiveHitTestBlock(self.currentSelection);
+            }
+        }
+        
 		[self.selections addObject:self.currentSelection];
 		self.currentSelection = nil;
 	}
@@ -504,9 +520,10 @@ void cm(CGPDFScannerRef scanner, void *info)
 	[keyword release]; keyword = nil;
 	[stringDetector release];
 	[documentURL release]; documentURL = nil;
+    [positiveHitTestBlock release];
 	CGPDFDocumentRelease(pdfDocument); pdfDocument = nil;
 	[super dealloc];
 }
 
-@synthesize documentURL, keyword, stringDetector, fontCollection, renderingStateStack, currentSelection, selections, rawTextContent;
+@synthesize documentURL, keyword, stringDetector, fontCollection, renderingStateStack, currentSelection, selections, rawTextContent, documentPoint, findsPoint, positiveHitTestBlock;
 @end

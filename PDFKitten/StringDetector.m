@@ -58,7 +58,7 @@
 /* The next character to look for */
 - (unichar)nextCharacter:(BOOL *)isLast
 {
-	*isLast = (self.keywordPosition == ([self.keyword length] - 1));
+	*isLast = (!self.keyword || (self.keyword && self.keywordPosition == ([self.keyword length] - 1)));
 	if (self.keywordPosition >= [self.keyword length]) return 0;
 	return [self.keyword characterAtIndex:self.keywordPosition];
 }
@@ -108,66 +108,83 @@
 	NSString *unicodeString = [[font stringWithPDFString:string] lowercaseString];
 	
 	[unicodeContent appendString:unicodeString];
+    
+    for (int i = 0; i < [unicodeString length]; i++)
+    {
+        NSString *needleString = [NSString stringWithFormat:@"%C", [unicodeString characterAtIndex:i]];
+        
+        // Expand ligatures to separate characters
+        needleString = [self stringByExpandingLigatures:needleString font:font];
+        
+        if ([self.keyword length] > 0) {
+            
+            BOOL isFirst = (self.keywordPosition == 0);
+            BOOL isLast;
+            if ([self append:needleString isLast:&isLast font:font])
+            {
+                if (isFirst)
+                {
+                    // Tell delegate first characher was scanned.
+                    [self didStartDetectingNeedle];
+                }
+                
+                // Tell delegate another character was scanned.
+                // It is critical that this message be sent AFTER the first character
+                // of the keyword has been detected, and BEFORE the last character is
+                // detected, such that all characters of the keyword fall within the
+                // messages corresponding to the start and end of the detected string.
+                [self didScanCharacter:[cidString characterAtIndex:i]];
+                
+                if (isLast)
+                {
+                    // The entire string was found. Inform the delegate
+                    // and reset for further scanning.
+                    [self didFindNeedle];
+                    [self reset];
+                }
+            }
+            else
+            {
+                // Reset and try again!
+                [self reset];
+                
+                // This covers the case where the character does not match the current
+                // position in the keyword, but matches the first.
+                if ([self append:needleString isLast:&isLast font:font])
+                {
+                    [self didStartDetectingNeedle];
+                    
+                    [self didScanCharacter:[cidString characterAtIndex:i]];
+                    
+                    if (isLast)
+                    {
+                        [self didFindNeedle];
+                        [self reset];
+                    }
+                }
+                else
+                {
+                    // Tell delegate another character was scanned,
+                    // and reset in case part of the keyword was already matched.
+                    [self didScanCharacter:[cidString characterAtIndex:i]];
+                }
+            }
+            
+        } else {
+            
+            //locate the text between whitespace
+            NSArray *texts = [needleString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            for (NSString *text in texts) {
+                [self didStartDetectingNeedle];
+                for (unsigned i = 0; i < [text length]; i++) {
+                    [self didScanCharacter:[text characterAtIndex:i]];
+                }
+                [self didFindNeedle];
+                [self reset];
+            }
+        }
+    }
 		
-	for (int i = 0; i < [unicodeString length]; i++)
-	{
-		NSString *needleString = [NSString stringWithFormat:@"%C", [unicodeString characterAtIndex:i]];
-		
-		// Expand ligatures to separate characters
-		needleString = [self stringByExpandingLigatures:needleString font:font];
-	
-		BOOL isFirst = (self.keywordPosition == 0);
-		BOOL isLast;
-		if ([self append:needleString isLast:&isLast font:font])
-		{
-			if (isFirst)
-			{
-				// Tell delegate first characher was scanned.
-				[self didStartDetectingNeedle];
-			}
-						
-			// Tell delegate another character was scanned.
-			// It is critical that this message be sent AFTER the first character
-			// of the keyword has been detected, and BEFORE the last character is
-			// detected, such that all characters of the keyword fall within the
-			// messages corresponding to the start and end of the detected string.
-			[self didScanCharacter:[cidString characterAtIndex:i]];
-
-			if (isLast)
-			{
-				// The entire string was found. Inform the delegate
-				// and reset for further scanning.
-				[self didFindNeedle];
-				[self reset];
-			}
-		}
-		else
-		{
-			// Reset and try again!
-			[self reset];
-
-			// This covers the case where the character does not match the current
-			// position in the keyword, but matches the first.
-			if ([self append:needleString isLast:&isLast font:font])
-			{
-				[self didStartDetectingNeedle];
-		
-				[self didScanCharacter:[cidString characterAtIndex:i]];
-				
-				if (isLast)
-				{
-					[self didFindNeedle];
-					[self reset];
-				}
-			}
-			else
-			{
-				// Tell delegate another character was scanned,
-				// and reset in case part of the keyword was already matched.
-				[self didScanCharacter:[cidString characterAtIndex:i]];
-			}
-		}
-	}
 	return unicodeString;
 }
 

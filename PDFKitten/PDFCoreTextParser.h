@@ -4,7 +4,7 @@
 #import "RenderingState.h"
 #import "Selection.h"
 
-@interface PDFCoreTextParser : NSObject <StringDetectorDelegate> {
+@interface PDFCoreTextParser : NSObject {
 	NSURL *documentURL;
 	NSString *keyword;
 	CGPDFDocumentRef pdfDocument;

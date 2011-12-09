@@ -15,6 +15,9 @@
 	Selection *currentSelection;
 	NSMutableArray *selections;
 	NSMutableString **rawTextContent;
+    CGPoint documentPoint;
+    BOOL findsPoint;
+    void(^positiveHitTestBlock)(Selection *selection);
 }
 
 /* Initialize with a file path */
@@ -29,10 +32,13 @@
 /* Start scanning a particular page */
 - (void)scanPage:(CGPDFPageRef)page;
 
+- (void)setHitTestPoint:(CGPoint)hitTestPoint;
+
 @property (nonatomic, retain) NSMutableArray *selections;
 @property (nonatomic, retain) RenderingStateStack *renderingStateStack;
 @property (nonatomic, retain) FontCollection *fontCollection;
 @property (nonatomic, retain) StringDetector *stringDetector;
 @property (nonatomic, retain) NSString *keyword;
 @property (nonatomic, assign) NSMutableString **rawTextContent;
+@property (nonatomic, copy) void(^positiveHitTestBlock)(Selection *selection);
 @end

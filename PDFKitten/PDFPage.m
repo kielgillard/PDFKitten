@@ -1,5 +1,6 @@
 #import "PDFPage.h"
 #import <QuartzCore/QuartzCore.h>
+#import "PDFCoreTextParser.h"
 
 @implementation PDFContentView
 
@@ -158,7 +159,12 @@
 
 - (void)didLongPress:(UILongPressGestureRecognizer *)recognizer
 {
-    
+    [self setKeyword:@""];
+    [((PDFContentView *)contentView).scanner setHitTestPoint:[recognizer locationInView:contentView]];
+    ((PDFContentView *)contentView).scanner.positiveHitTestBlock = ^(Selection *selection) {
+        [[[UIAlertView alloc] initWithTitle:@"You tapped this string:" message:@"" delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] autorelease];
+    };
+    [self setNeedsDisplay];
 }
 
 @end

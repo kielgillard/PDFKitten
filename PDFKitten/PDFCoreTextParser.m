@@ -126,10 +126,11 @@ void PDFCoreTextParser_cm(CGPDFScannerRef scanner, void *info);
 	CGPDFOperatorTableSetCallback(operatorTable, "Tf", PDFCoreTextParser_Tf);
 	
 	// Graphics state operators
-	CGPDFOperatorTableSetCallback(operatorTable, "cm", PDFCoreTextParser_cm);
+	CGPDFOperatorTableSetCallback(operatorTable, "cm", PDFCoreTextParser_cm);   //concatenate ctm
 	CGPDFOperatorTableSetCallback(operatorTable, "q", PDFCoreTextParser_q);
 	CGPDFOperatorTableSetCallback(operatorTable, "Q", PDFCoreTextParser_Q);
 	
+    //begin text operator: 
 	CGPDFOperatorTableSetCallback(operatorTable, "BT", PDFCoreTextParser_BT);
 	
 	return operatorTable;
@@ -167,55 +168,19 @@ void PDFCoreTextParser_cm(CGPDFScannerRef scanner, void *info);
 
 - (void)scanPage:(CGPDFPageRef)page
 {
-	// Return immediately if no keyword set
-	if (!keyword) return;
-    
-    [self.stringDetector reset];
-    self.stringDetector.keyword = self.keyword;
-
     // Initialize font collection (per page)
 	self.fontCollection = [self fontCollectionWithPage:page];
     
 	CGPDFContentStreamRef content = CGPDFContentStreamCreateWithPage(page);
+    
+    //parse resources
+    CGPDFObjectRef obj = CGPDFContentStreamGetResource(content, "FontDescriptor", "FontFile");
+    
+    //scan document for text and text layout
 	CGPDFScannerRef scanner = CGPDFScannerCreate(content, self.operatorTable, self);
 	CGPDFScannerScan(scanner);
 	CGPDFScannerRelease(scanner); scanner = nil;
 	CGPDFContentStreamRelease(content); content = nil;
-}
-
-
-#pragma mark StringDetectorDelegate
-
-- (void)detector:(StringDetector *)detector didScanCharacter:(unichar)character
-{
-	RenderingState *state = [self currentRenderingState];
-	CGFloat width = [self.currentFont widthOfCharacter:character withFontSize:state.fontSize];
-	width /= 1000;
-	width += state.characterSpacing;
-	if (character == 32)
-	{
-		width += state.wordSpacing;
-	}
-	[state translateTextPosition:CGSizeMake(width, 0)];
-}
-
-- (void)detector:(StringDetector *)detector didStartMatchingString:(NSString *)string
-{
-	Selection *sel = [[Selection alloc] initWithStartState:self.currentRenderingState];
-	self.currentSelection = sel;
-	[sel release];
-}
-
-- (void)detector:(StringDetector *)detector foundString:(NSString *)needle
-{	
-	RenderingState *state = [[self renderingStateStack] topRenderingState];
-	[self.currentSelection finalizeWithState:state];
-
-	if (self.currentSelection)
-	{
-		[self.selections addObject:self.currentSelection];
-		self.currentSelection = nil;
-	}
 }
 
 #pragma mark - Scanner callbacks
@@ -260,6 +225,16 @@ void PDFCoreTextParser_didScanSpace(float value, PDFCoreTextParser *scanner)
 /* Called any time the scanner scans a string */
 void PDFCoreTextParser_didScanString(CGPDFStringRef pdfString, PDFCoreTextParser *scanner)
 {
+    CFMutableAttributedStringRef text = scanner->documentText;
+    
+    if (!text) {
+        
+        text = CFAttributedStringCreateMutable(NULL, 0);
+        scanner->documentText = text;
+    }
+    
+    CFMuta
+    
 	NSString *string = [[scanner stringDetector] appendPDFString:pdfString withFont:[scanner currentFont]];
 	
 	if (scanner.rawTextContent)
